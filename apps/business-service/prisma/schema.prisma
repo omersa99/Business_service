@@ -1,0 +1,37 @@
+datasource mongo {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  business   Business? @relation(fields: [businessId], references: [id])
+  businessId String?   @unique
+  createdAt  DateTime  @default(now())
+  firstName  String?
+  id         String    @id @default(auto()) @map("_id") @mongo.ObjectId
+  lastName   String?
+  password   String
+  roles      Json
+  updatedAt  DateTime  @updatedAt
+  username   String    @unique
+}
+
+model Business {
+  accountingType EnumBusinessAccountingType?
+  createdAt      DateTime                    @default(now())
+  id             String                      @id @default(auto()) @map("_id") @mongo.ObjectId
+  name           String?
+  taxId          Int?                        @unique
+  updatedAt      DateTime                    @updatedAt
+  user           User?
+}
+
+enum EnumBusinessAccountingType {
+  Undefined
+  Cash
+  Acum
+}
